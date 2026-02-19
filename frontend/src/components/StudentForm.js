@@ -83,7 +83,8 @@ const StudentForm = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5001/api/students', formData, {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const response = await axios.post(`${apiUrl}/api/students`, formData, {
         withCredentials: true
       });
 
@@ -134,7 +135,8 @@ const StudentForm = () => {
     setRetrieveLoading(true);
 
     try {
-      const response = await axios.get(`http://localhost:5001/api/students/${retrieveId}`, {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const response = await axios.get(`${apiUrl}/api/students/${retrieveId}`, {
         withCredentials: true
       });
       setStudentData(response.data.data);

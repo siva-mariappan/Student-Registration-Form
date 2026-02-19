@@ -12,7 +12,8 @@ function App() {
     // Check if user is authenticated
     const checkAuth = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/auth/current-user', {
+        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+        const response = await axios.get(`${apiUrl}/auth/current-user`, {
           withCredentials: true
         });
         if (response.data.success && response.data.user) {
@@ -30,7 +31,8 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      await axios.get('http://localhost:5001/auth/logout', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      await axios.get(`${apiUrl}/auth/logout`, {
         withCredentials: true
       });
       setUser(null);

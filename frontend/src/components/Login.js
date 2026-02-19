@@ -4,7 +4,8 @@ import '../styles/Login.css';
 const Login = () => {
   const handleGoogleLogin = () => {
     // Redirect to backend Google OAuth route
-    window.location.href = 'http://localhost:5001/auth/google';
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+    window.location.href = `${apiUrl}/auth/google`;
   };
 
   return (
