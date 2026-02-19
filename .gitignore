@@ -97,3 +97,7 @@ pids/
 *.pem
 *.key
 .vercel
+
+# Local credential notes (NEVER COMMIT!)
+HOSTING_NOTE.txt
+*_CREDENTIALS*.txt
