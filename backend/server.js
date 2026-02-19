@@ -1,0 +1,58 @@
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const passport = require('passport');
+require('dotenv').config();
+
+const connectDB = require('./config/db');
+const studentRoutes = require('./routes/studentRoutes');
+const authGoogleRoutes = require('./routes/authGoogleRoutes');
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Connect to MongoDB
+connectDB();
+
+// Passport config
+require('./config/passport')(passport);
+
+// Middleware
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Session middleware (must be before passport)
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your_session_secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    httpOnly: true,
+    secure: false // set to true if using HTTPS
+  }
+}));
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Routes
+app.use('/auth', authGoogleRoutes);
+app.use('/api/students', studentRoutes);
+
+// Root route
+app.get('/', (req, res) => {
+  res.json({ message: 'Student Registration API is running' });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
