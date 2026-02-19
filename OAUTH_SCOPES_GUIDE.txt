@@ -1,0 +1,348 @@
+================================================================================
+        GOOGLE OAUTH SCOPES - DETAILED GUIDE
+================================================================================
+
+WHAT ARE SCOPES?
+================
+
+Scopes are permissions that your app requests from users.
+For your Student Registration System, you need:
+
+1. userinfo.email  - To get user's email address
+2. userinfo.profile - To get user's name and picture
+
+================================================================================
+                    STEP-BY-STEP: ADD SCOPES
+================================================================================
+
+STEP 1: ACCESS OAUTH CONSENT SCREEN
+====================================
+
+Option A: Direct Link
+https://console.cloud.google.com/apis/credentials/consent
+
+Option B: Navigate Manually
+1. Go to: https://console.cloud.google.com/
+2. Menu (☰) → APIs & Services → OAuth consent screen
+
+STEP 2: NAVIGATE TO SCOPES
+===========================
+
+If you're editing an existing consent screen:
+1. Click "EDIT APP" button
+2. Click "SAVE AND CONTINUE" on first page (App information)
+3. You'll land on "Scopes" page
+
+If you're creating new:
+1. Fill out App information page
+2. Click "SAVE AND CONTINUE"
+3. You'll automatically go to Scopes page
+
+STEP 3: ADD OR REMOVE SCOPES
+=============================
+
+1. On the Scopes page, look for:
+   "+ ADD OR REMOVE SCOPES" button
+
+2. Click it
+
+3. A side panel opens titled:
+   "Update selected scopes for [Your App Name]"
+
+STEP 4: SEARCH FOR SCOPES
+==========================
+
+METHOD A: Use Search Box
+------------------------
+At the top of the panel:
+
+Search for: email
+Result: .../auth/userinfo.email
+☑ Check the box
+
+Search for: profile  
+Result: .../auth/userinfo.profile
+☑ Check the box
+
+METHOD B: Browse Manually
+-------------------------
+Scroll down to find:
+
+Google OAuth2 API v2
+  ☑ .../auth/userinfo.email
+  ☑ .../auth/userinfo.profile
+
+STEP 5: VERIFY SELECTIONS
+==========================
+
+At the top of the panel, you should see:
+"Selected scopes: 2"
+
+Make sure both are checked:
+✓ .../auth/userinfo.email
+✓ .../auth/userinfo.profile
+
+Full scope names:
+https://www.googleapis.com/auth/userinfo.email
+https://www.googleapis.com/auth/userinfo.profile
+
+STEP 6: UPDATE
+==============
+
+1. Click "UPDATE" button at bottom of side panel
+
+2. Panel closes
+
+3. Main page now shows your selected scopes:
+
+   Your non-sensitive scopes:
+   .../auth/userinfo.email
+   .../auth/userinfo.profile
+
+STEP 7: SAVE AND CONTINUE
+==========================
+
+1. Scroll to bottom of Scopes page
+
+2. Click "SAVE AND CONTINUE"
+
+3. You'll move to "Test users" page
+
+================================================================================
+                    WHAT EACH SCOPE DOES
+================================================================================
+
+1. .../auth/userinfo.email
+   ─────────────────────────
+   Full name: https://www.googleapis.com/auth/userinfo.email
+   
+   Purpose: Access user's email address
+   
+   What your app gets:
+   {
+     "email": "user@example.com",
+     "email_verified": true
+   }
+   
+   Used for:
+   - Creating user accounts
+   - Identifying returning users
+   - Sending notifications (future feature)
+
+2. .../auth/userinfo.profile
+   ──────────────────────────
+   Full name: https://www.googleapis.com/auth/userinfo.profile
+   
+   Purpose: Access user's basic profile info
+   
+   What your app gets:
+   {
+     "id": "1234567890",
+     "name": "John Doe",
+     "given_name": "John",
+     "family_name": "Doe",
+     "picture": "https://...photo.jpg"
+   }
+   
+   Used for:
+   - Displaying user name in header
+   - Showing profile picture
+   - Personalizing experience
+
+3. openid (Optional)
+   ──────────────────
+   Full name: openid
+   
+   Purpose: OpenID Connect authentication
+   
+   Note: Usually included automatically
+   You don't need to explicitly add this
+
+================================================================================
+                    TROUBLESHOOTING
+================================================================================
+
+ISSUE: Can't find "ADD OR REMOVE SCOPES" button
+SOLUTION:
+- Make sure you're on the "Scopes" page/tab
+- You might need to click "EDIT APP" first
+- Check you selected the correct project
+
+ISSUE: Scopes not appearing in search
+SOLUTION:
+- Try exact search: "userinfo.email"
+- Scroll through "Google OAuth2 API v2" section
+- Make sure APIs are enabled in your project
+
+ISSUE: "UPDATE" button is disabled
+SOLUTION:
+- You must select at least one scope
+- Check the boxes next to the scopes
+- Look for checkmarks (☑) not empty boxes (☐)
+
+ISSUE: Changes not saving
+SOLUTION:
+- Click "UPDATE" in the side panel first
+- Then click "SAVE AND CONTINUE" on main page
+- Don't navigate away before saving
+
+ISSUE: "Scopes have been updated" but not seeing them
+SOLUTION:
+- Click "EDIT APP" to view current configuration
+- Go to Scopes page to verify
+- Scopes should be listed under "Your non-sensitive scopes"
+
+================================================================================
+                    COMPLETE OAUTH SETUP FLOW
+================================================================================
+
+1. OAuth Consent Screen (App Information)
+   ├─ App name: Student Registration System
+   ├─ User support email: your-email@gmail.com
+   └─ Developer contact: your-email@gmail.com
+
+2. Scopes ← YOU ARE HERE
+   ├─ ☑ .../auth/userinfo.email
+   └─ ☑ .../auth/userinfo.profile
+
+3. Test Users
+   └─ Add: your-email@gmail.com
+
+4. Summary
+   └─ Review all settings
+
+5. Create OAuth Client ID
+   ├─ Type: Web application
+   ├─ Authorized origins: http://localhost:3000, http://localhost:5001
+   └─ Redirect URI: http://localhost:5001/auth/google/callback
+
+================================================================================
+                    VERIFICATION CHECKLIST
+================================================================================
+
+After adding scopes:
+
+□ "ADD OR REMOVE SCOPES" button clicked
+□ Searched for "email" and "profile"
+□ Checked ☑ .../auth/userinfo.email
+□ Checked ☑ .../auth/userinfo.profile
+□ "Selected scopes: 2" displayed
+□ Clicked "UPDATE" button
+□ Side panel closed
+□ Scopes visible on main Scopes page
+□ Clicked "SAVE AND CONTINUE"
+□ Moved to Test users page
+
+================================================================================
+                    WHAT USERS WILL SEE
+================================================================================
+
+When users sign in with Google, they'll see:
+
+┌─────────────────────────────────────────┐
+│  Sign in with Google                    │
+├─────────────────────────────────────────┤
+│  [G] Continue as John Doe               │
+│      john@example.com                   │
+├─────────────────────────────────────────┤
+│  Student Registration System wants to:  │
+│                                         │
+│  ✓ See your email address               │
+│  ✓ See your personal info               │
+│                                         │
+│  [Cancel]           [Continue]          │
+└─────────────────────────────────────────┘
+
+This consent screen appears only once (first login).
+After that, users are automatically signed in.
+
+================================================================================
+                    PRODUCTION CONSIDERATIONS
+================================================================================
+
+TESTING MODE (Default):
+- Only test users can sign in
+- Shows "This app isn't verified" warning
+- Good for development
+
+To add test users:
+1. OAuth consent screen → Test users
+2. Click "+ ADD USERS"
+3. Enter email addresses
+4. Click "SAVE"
+
+PUBLISHED MODE (For Production):
+- Anyone can sign in
+- Requires app verification by Google
+- Takes 4-6 weeks
+- Needed for public apps
+
+To publish:
+1. OAuth consent screen → Publishing status
+2. Click "PUBLISH APP"
+3. Submit for verification
+
+For now, stay in TESTING mode!
+
+================================================================================
+                    SCOPE PERMISSIONS SUMMARY
+================================================================================
+
+Your App Requests:
+  userinfo.email    → Email address
+  userinfo.profile  → Name, picture, basic info
+
+User Controls:
+  ✓ Can see what you're requesting
+  ✓ Can deny access (won't be able to use app)
+  ✓ Can revoke access later from Google account settings
+
+Best Practices:
+  ✓ Only request scopes you need
+  ✓ Explain why you need them (in consent screen)
+  ✓ Don't share user data with third parties
+  ✓ Secure user data properly
+
+================================================================================
+                    NEXT STEPS AFTER ADDING SCOPES
+================================================================================
+
+1. Add Test Users
+   - Go to "Test users" page
+   - Add your email
+   - Click "SAVE AND CONTINUE"
+
+2. Review Summary
+   - Check all settings
+   - Click "BACK TO DASHBOARD"
+
+3. Create OAuth Client ID
+   - Go to Credentials page
+   - Create new OAuth 2.0 Client ID
+   - Add authorized origins and redirect URIs
+
+4. Update Backend
+   - Copy Client ID and Secret
+   - Update backend/.env
+   - Restart backend server
+
+5. Test Login
+   - Visit your app
+   - Click "Sign in with Google"
+   - Verify consent screen shows correct scopes
+   - Complete login
+
+================================================================================
+                    SUCCESS!
+================================================================================
+
+Once scopes are added and consent screen is configured:
+
+✓ Users can see what permissions your app needs
+✓ Clear, transparent authentication process
+✓ Secure access to only necessary information
+✓ Professional, trustworthy appearance
+
+Your OAuth setup is complete! 🎉
+
+================================================================================
