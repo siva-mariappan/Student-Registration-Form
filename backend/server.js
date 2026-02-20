@@ -34,9 +34,8 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'your_session_secret',
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({
-    client: mongoose.connection.getClient(),
-    dbName: 'student_registration',
+  store: new MongoStore({
+    mongoUrl: process.env.MONGODB_URI,
     collectionName: 'sessions',
     ttl: 24 * 60 * 60 // 1 day
   }),
