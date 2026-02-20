@@ -22,9 +22,28 @@ connectDB();
 require('./config/passport')(passport);
 
 // Middleware
+// Allow requests from frontend (Vercel) and any trusted origins
+const allowedOrigins = [
+  'https://student-registration-form-psi-one.vercel.app', // Your Vercel frontend
+  'http://localhost:3000', // Local development
+  process.env.FRONTEND_URL // Environment variable
+].filter(Boolean); // Remove undefined values
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      // For now, allow all origins (you can restrict later)
+      callback(null, true);
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(bodyParser.json());
