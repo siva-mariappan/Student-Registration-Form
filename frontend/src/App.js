@@ -12,7 +12,7 @@ function App() {
     // Check if user is authenticated
     const checkAuth = async () => {
       try {
-        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+        const apiUrl = process.env.REACT_APP_API_URL || 'https://student-registration-form-ar1g.onrender.com';
         const response = await axios.get(`${apiUrl}/auth/current-user`, {
           withCredentials: true
         });
@@ -31,7 +31,7 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://student-registration-form-ar1g.onrender.com';
       await axios.get(`${apiUrl}/auth/logout`, {
         withCredentials: true
       });

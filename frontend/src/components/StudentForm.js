@@ -83,7 +83,7 @@ const StudentForm = () => {
     setLoading(true);
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://student-registration-form-ar1g.onrender.com';
       const response = await axios.post(`${apiUrl}/api/students`, formData, {
         withCredentials: true
       });
@@ -135,7 +135,7 @@ const StudentForm = () => {
     setRetrieveLoading(true);
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://student-registration-form-ar1g.onrender.com';
       const response = await axios.get(`${apiUrl}/api/students/${retrieveId}`, {
         withCredentials: true
       });

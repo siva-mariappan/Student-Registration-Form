@@ -1,0 +1,229 @@
+================================================================================
+            VERCEL ENVIRONMENT VARIABLE NOT WORKING - DEBUG GUIDE
+================================================================================
+
+PROBLEM:
+You set REACT_APP_API_URL on Vercel but StudentForm still doesn't show after login
+
+POSSIBLE CAUSES:
+1. Environment variable not applied to correct environment
+2. Didn't rebuild properly after setting variable
+3. CORS blocking the request
+4. Session cookies not being sent
+
+================================================================================
+FIX 1: PROPERLY SET VERCEL ENVIRONMENT VARIABLE
+================================================================================
+
+1. Go to: https://vercel.com/dashboard
+
+2. Click on your frontend project
+
+3. Settings → Environment Variables
+
+4. IMPORTANT: When adding REACT_APP_API_URL:
+
+   Name: REACT_APP_API_URL
+   Value: https://student-registration-form-ar1g.onrender.com
+
+   ⚠️ CRITICAL: Select ALL THREE environments:
+   ☑ Production
+   ☑ Preview
+   ☑ Development
+
+   (If you only selected one, it won't work in production!)
+
+5. Click "Save"
+
+6. If the variable already exists, DELETE it and add it again
+   (Sometimes updating doesn't work, need to delete and recreate)
+
+================================================================================
+FIX 2: FORCE COMPLETE REBUILD
+================================================================================
+
+After setting the environment variable:
+
+1. Go to Deployments tab
+
+2. Find your latest deployment
+
+3. Click on it
+
+4. Click "..." menu → "Redeploy"
+
+5. ⚠️ IMPORTANT: Check "Use existing Build Cache" is UNCHECKED
+   (We want a fresh build, not cached)
+
+6. Click "Redeploy"
+
+7. Wait for deployment to finish (1-2 minutes)
+
+8. Test again in FRESH incognito browser
+
+================================================================================
+FIX 3: VERIFY THE VARIABLE IS ACTUALLY BEING USED
+================================================================================
+
+Add a test to your code to verify the variable is loaded:
+
+1. Open your deployed site: https://your-vercel-app.vercel.app
+
+2. Press F12 → Console tab
+
+3. Type this and press Enter:
+   console.log(process.env.REACT_APP_API_URL)
+
+4. What do you see?
+   - If you see: https://student-registration-form-ar1g.onrender.com ✓ Good!
+   - If you see: undefined or http://localhost:5001 ✗ Variable not loaded
+
+If undefined, the environment variable wasn't applied during build.
+
+================================================================================
+FIX 4: CHECK NETWORK TAB FOR ACTUAL REQUEST
+================================================================================
+
+1. Open your Vercel site
+
+2. Press F12 → Network tab
+
+3. Clear the network log (trash icon)
+
+4. Refresh the page
+
+5. Look for a request to "/auth/current-user"
+
+6. Click on it and check:
+   - Request URL: Does it show your Render URL or localhost?
+   - Status Code: 200 (good), 401/403 (auth issue), 0/CORS (CORS issue)
+   - Response: What data is returned?
+
+WHAT THE STATUS CODES MEAN:
+
+Status 200 ✓
+  Response: {"success": true, "user": {...}}
+  → Authentication working! Check console for other errors
+
+Status 200 but Response: {"success": false, "user": null}
+  → Session not persisting, cookie issue
+
+Status 401 or 403
+  → Not authenticated, session lost
+
+Status 0 or (failed) with "CORS error"
+  → CORS blocking request
+  → Fix: Check FRONTEND_URL on Render backend
+
+Status 404
+  → Backend route not found, check backend URL is correct
+
+================================================================================
+FIX 5: CORS AND COOKIE ISSUES
+================================================================================
+
+If requests are being blocked or cookies aren't sent:
+
+CHECK RENDER BACKEND ENVIRONMENT:
+
+FRONTEND_URL must EXACTLY match your Vercel URL (no trailing slash)
+
+Wrong: https://my-app.vercel.app/
+Right: https://my-app.vercel.app
+
+Also verify these are set on Render:
+- NODE_ENV=production (MUST be production for secure cookies)
+- FRONTEND_URL=https://your-exact-vercel-url.vercel.app
+
+Then check browser console for CORS errors like:
+"Access to fetch at '...' from origin '...' has been blocked by CORS policy"
+
+================================================================================
+FIX 6: TEST BACKEND AUTH ENDPOINT DIRECTLY
+================================================================================
+
+After you login with Google, immediately open a new tab and visit:
+https://student-registration-form-ar1g.onrender.com/auth/current-user
+
+SCENARIO A: You see {"success": true, "user": {...}}
+→ Backend authentication IS working
+→ Problem is frontend can't reach it
+→ Check REACT_APP_API_URL is set correctly
+→ Check CORS (FRONTEND_URL on Render)
+
+SCENARIO B: You see {"success": false, "user": null}
+→ Session not persisting across requests
+→ Check NODE_ENV=production on Render
+→ Check SESSION_SECRET is set on Render
+→ Try in incognito to rule out cookie issues
+
+SCENARIO C: You see an error page or "Cannot GET"
+→ Backend is down or route doesn't exist
+→ Check Render logs for errors
+
+================================================================================
+FIX 7: NUCLEAR OPTION - HARDCODE FOR TESTING
+================================================================================
+
+If nothing works, temporarily hardcode to test:
+
+In your LOCAL code (we'll revert this):
+
+frontend/src/App.js - Line 15:
+Change from:
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+
+To:
+  const apiUrl = 'https://student-registration-form-ar1g.onrender.com';
+
+Also change line 34 (in handleLogout)
+
+Then:
+1. Commit and push to GitHub
+2. Vercel will auto-deploy
+3. Test if it works now
+
+If this works → Problem is definitely the environment variable not loading
+If still doesn't work → Problem is CORS or cookies
+
+================================================================================
+DEBUGGING CHECKLIST
+================================================================================
+
+□ REACT_APP_API_URL set on Vercel with ALL THREE environments checked
+□ Deleted old variable and recreated it
+□ Redeployed WITHOUT using build cache
+□ Tested in fresh incognito browser
+□ Cleared all cookies and cache
+□ Checked Network tab for /auth/current-user request
+□ Checked Console tab for errors
+□ Tested backend endpoint directly
+□ FRONTEND_URL on Render matches Vercel URL exactly
+□ NODE_ENV=production on Render
+□ Both services show as "Deployed" and running
+
+================================================================================
+INFORMATION NEEDED FOR FURTHER HELP
+================================================================================
+
+Please provide:
+
+1. Your Vercel frontend URL: https://???.vercel.app
+
+2. Browser console errors (screenshot or copy-paste)
+
+3. Network tab /auth/current-user request:
+   - Status code: ???
+   - Response data: ???
+
+4. Direct backend test result:
+   When you visit https://student-registration-form-ar1g.onrender.com/auth/current-user
+   What do you see?
+
+5. Vercel environment variable:
+   Is REACT_APP_API_URL showing in Settings → Environment Variables?
+   What's the exact value?
+
+With this info, I can pinpoint the exact issue!
+
+================================================================================

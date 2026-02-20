@@ -1,0 +1,184 @@
+================================================================================
+        QUICK FIX: Error 400 - redirect_uri_mismatch
+================================================================================
+
+ERROR MESSAGE:
+"Access blocked: This app's request is invalid"
+"Error 400: redirect_uri_mismatch"
+
+THIS MEANS:
+Google OAuth doesn't recognize your Render backend URL as authorized.
+
+================================================================================
+IMMEDIATE FIX (5 MINUTES)
+================================================================================
+
+STEP 1: FIND YOUR RENDER BACKEND URL
+================================================================================
+
+1. Go to: https://dashboard.render.com
+2. Click on your backend service
+3. Look at the top - you'll see a URL like:
+   https://XXXXXXXX.onrender.com
+
+   Example: https://student-registration-backend.onrender.com
+
+4. COPY THIS EXACT URL (we'll call it YOUR_BACKEND_URL)
+
+================================================================================
+STEP 2: ADD URL TO GOOGLE OAUTH CONSOLE
+================================================================================
+
+1. Go to: https://console.cloud.google.com/apis/credentials
+
+2. Click on "OAuth 2.0 Client IDs"
+
+3. Click on your client ID:
+   Client ID: 130550221013-2hcgtmor7c20v309f6p60a6e3ck2sosj.apps.googleusercontent.com
+
+4. Scroll down to "Authorized redirect URIs"
+
+5. Click "+ ADD URI"
+
+6. Paste EXACTLY (replace with your actual Render URL):
+   https://YOUR_BACKEND_URL/auth/google/callback
+
+   Example:
+   https://student-registration-backend.onrender.com/auth/google/callback
+
+   ⚠️ IMPORTANT:
+   - Must start with https:// (not http://)
+   - Must end with /auth/google/callback
+   - NO trailing slash after callback
+   - NO spaces before or after
+
+7. Click "SAVE" at the bottom of the page
+
+8. ⏰ WAIT 5-10 MINUTES for Google to apply changes
+
+================================================================================
+STEP 3: UPDATE RENDER ENVIRONMENT VARIABLE
+================================================================================
+
+1. Go to: https://dashboard.render.com
+
+2. Click on your backend service
+
+3. Click "Environment" in left sidebar
+
+4. Find or Add: GOOGLE_CALLBACK_URL
+
+5. Set the value to (replace with your actual URL):
+   https://YOUR_BACKEND_URL/auth/google/callback
+
+   Example:
+   https://student-registration-backend.onrender.com/auth/google/callback
+
+6. Click "Save Changes"
+
+7. Render will auto-redeploy (wait 2-3 minutes)
+
+================================================================================
+STEP 4: ALSO ADD FRONTEND URL
+================================================================================
+
+While you're in Google Console, also add:
+
+1. Under "Authorized JavaScript origins", click "+ ADD URI"
+
+2. Add your Vercel frontend URL:
+   https://your-frontend-app.vercel.app
+
+3. Also add your backend URL:
+   https://YOUR_BACKEND_URL
+
+4. Click "SAVE"
+
+================================================================================
+STEP 5: TEST IN INCOGNITO BROWSER
+================================================================================
+
+1. Open a NEW incognito/private browser window
+
+2. Go to your Vercel frontend URL
+
+3. Click "Sign in with Google"
+
+4. ✅ Should work now!
+
+================================================================================
+EXAMPLE CONFIGURATION
+================================================================================
+
+If your Render backend is: https://student-reg-backend-abc123.onrender.com
+And your Vercel frontend is: https://student-registration-form.vercel.app
+
+Then in GOOGLE OAUTH CONSOLE:
+
+Authorized JavaScript origins:
+├─ https://student-reg-backend-abc123.onrender.com
+├─ https://student-registration-form.vercel.app
+├─ http://localhost:3000
+└─ http://localhost:5001
+
+Authorized redirect URIs:
+├─ https://student-reg-backend-abc123.onrender.com/auth/google/callback
+└─ http://localhost:5001/auth/google/callback
+
+And in RENDER environment variables:
+GOOGLE_CALLBACK_URL=https://student-reg-backend-abc123.onrender.com/auth/google/callback
+FRONTEND_URL=https://student-registration-form.vercel.app
+NODE_ENV=production
+
+================================================================================
+COMMON MISTAKES
+================================================================================
+
+❌ Using http:// instead of https://
+❌ Adding trailing slash: /callback/ (wrong) vs /callback (correct)
+❌ Copy-pasting with extra spaces
+❌ Using .com.com or missing .onrender.com
+❌ Not clicking SAVE in Google Console
+❌ Testing before waiting 5-10 minutes
+❌ Testing in same browser (old cookies cached)
+
+================================================================================
+STILL GETTING THE ERROR?
+================================================================================
+
+Double-check these:
+
+1. In Google Console, click on your OAuth client ID again
+   → Verify the redirect URI is EXACTLY there with no typos
+
+2. In Render dashboard → Environment
+   → Verify GOOGLE_CALLBACK_URL matches EXACTLY what's in Google Console
+
+3. Wait the full 10 minutes after saving in Google Console
+
+4. Clear all browser cookies for your site:
+   - Chrome: F12 → Application → Storage → Clear site data
+   - Then try in fresh incognito window
+
+5. Check your Render logs for errors:
+   Render dashboard → Your service → Logs
+
+================================================================================
+WHAT ARE YOUR URLS?
+================================================================================
+
+To help you further, please share:
+
+1. Your Render backend URL:
+   Find at: https://dashboard.render.com
+   Looks like: https://xxxxx.onrender.com
+
+2. Your Vercel frontend URL:
+   Find at: https://vercel.com/dashboard
+   Looks like: https://xxxxx.vercel.app
+
+Then I can give you the EXACT values to copy-paste!
+
+================================================================================
+                            END OF QUICK FIX
+================================================================================

@@ -1,0 +1,257 @@
+================================================================================
+                    GOOGLE OAUTH PRODUCTION FIX GUIDE
+              Fix "localhost:5001/auth/google/callback" Error
+================================================================================
+
+PROBLEM:
+After clicking "Sign in with Google" on your production site, you're being
+redirected to http://localhost:5001/auth/google/callback instead of your
+production backend URL, causing a connection error.
+
+ROOT CAUSE:
+Your Google OAuth Console is still configured for localhost, not production URLs.
+
+================================================================================
+SOLUTION - 3 STEPS TO FIX
+================================================================================
+
+STEP 1: UPDATE GOOGLE OAUTH CONSOLE
+================================================================================
+
+1. Go to: https://console.cloud.google.com/apis/credentials
+
+2. Select Project: "Student Registration Form"
+
+3. Click on your OAuth 2.0 Client ID:
+   Name: "Web client 1" or similar
+
+4. ADD AUTHORIZED JAVASCRIPT ORIGINS:
+
+   Click "+ ADD URI" under "Authorized JavaScript origins"
+   Add BOTH of these URLs:
+
+   ✓ https://your-frontend-app.vercel.app
+   ✓ https://your-backend-app.onrender.com
+
+   Example:
+   ✓ https://student-registration-form.vercel.app
+   ✓ https://student-registration-backend.onrender.com
+
+5. ADD AUTHORIZED REDIRECT URIS:
+
+   Click "+ ADD URI" under "Authorized redirect URIs"
+   Add this URL (using your actual Render backend URL):
+
+   ✓ https://your-backend-app.onrender.com/auth/google/callback
+
+   Example:
+   ✓ https://student-registration-backend.onrender.com/auth/google/callback
+
+6. KEEP LOCALHOST URLS (for local development):
+   DO NOT DELETE these:
+   ✓ http://localhost:3000
+   ✓ http://localhost:5001
+   ✓ http://localhost:5001/auth/google/callback
+
+7. Click "SAVE" button at the bottom
+
+⏰ Wait 5-10 minutes for Google's changes to propagate
+
+================================================================================
+STEP 2: UPDATE RENDER ENVIRONMENT VARIABLES
+================================================================================
+
+1. Go to: https://dashboard.render.com
+
+2. Select your backend service
+
+3. Go to "Environment" tab
+
+4. FIND AND UPDATE these variables:
+
+   GOOGLE_CALLBACK_URL
+   Current: http://localhost:5001/auth/google/callback
+   Change to: https://your-backend-app.onrender.com/auth/google/callback
+
+   Example:
+   GOOGLE_CALLBACK_URL=https://student-registration-backend.onrender.com/auth/google/callback
+
+   FRONTEND_URL
+   Current: http://localhost:3000
+   Change to: https://your-frontend-app.vercel.app
+
+   Example:
+   FRONTEND_URL=https://student-registration-form.vercel.app
+
+   NODE_ENV
+   Current: development
+   Change to: production
+
+5. Click "Save Changes"
+
+6. Render will automatically redeploy your backend (wait 2-3 minutes)
+
+================================================================================
+STEP 3: UPDATE VERCEL ENVIRONMENT VARIABLES
+================================================================================
+
+1. Go to: https://vercel.com/dashboard
+
+2. Select your frontend project
+
+3. Go to Settings → Environment Variables
+
+4. FIND AND UPDATE:
+
+   REACT_APP_API_URL
+   Current: http://localhost:5001
+   Change to: https://your-backend-app.onrender.com
+
+   Example:
+   REACT_APP_API_URL=https://student-registration-backend.onrender.com
+
+5. Click "Save"
+
+6. Go to "Deployments" tab
+
+7. Click on the latest deployment → Click "..." → "Redeploy"
+
+8. Wait for redeployment to complete (1-2 minutes)
+
+================================================================================
+VERIFICATION CHECKLIST
+================================================================================
+
+After completing all steps above:
+
+□ Google OAuth Console has production URLs added
+□ Render backend has correct GOOGLE_CALLBACK_URL (production URL)
+□ Render backend has correct FRONTEND_URL (Vercel URL)
+□ Render backend has NODE_ENV=production
+□ Vercel frontend has correct REACT_APP_API_URL (Render URL)
+□ Both services have been redeployed
+□ Waited 5-10 minutes for Google changes to propagate
+
+================================================================================
+TESTING THE FIX
+================================================================================
+
+1. Open an INCOGNITO/PRIVATE browser window (to clear old sessions)
+
+2. Go to your production frontend: https://your-frontend-app.vercel.app
+
+3. Click "Sign in with Google"
+
+4. You should see:
+   ✓ Google login page appears
+   ✓ After login, redirected to: https://your-backend-app.onrender.com/auth/google/callback
+   ✓ Then redirected back to: https://your-frontend-app.vercel.app
+   ✓ Student Registration form displays
+
+5. If it works: ✅ SUCCESS!
+
+6. If it still goes to localhost:
+   - Clear browser cache and cookies completely
+   - Try in a different browser
+   - Wait 10 more minutes for Google changes to propagate
+   - Double-check all URLs in Google Console (no typos)
+
+================================================================================
+COMMON MISTAKES TO AVOID
+================================================================================
+
+❌ Forgetting to click "SAVE" in Google Console
+❌ Having typos in URLs (extra spaces, wrong domain)
+❌ Using http:// instead of https:// for production URLs
+❌ Adding trailing slashes to URLs (DON'T: https://example.com/)
+❌ Not waiting for Google changes to propagate (takes 5-10 minutes)
+❌ Not redeploying after changing environment variables
+❌ Testing in same browser without clearing cache
+
+================================================================================
+DETAILED URL EXAMPLES (REPLACE WITH YOUR ACTUAL URLS)
+================================================================================
+
+If your Render backend URL is:
+https://student-registration-backend.onrender.com
+
+And your Vercel frontend URL is:
+https://student-registration-form.vercel.app
+
+Then your environment variables should be:
+
+RENDER BACKEND:
+--------------
+GOOGLE_CALLBACK_URL=https://student-registration-backend.onrender.com/auth/google/callback
+FRONTEND_URL=https://student-registration-form.vercel.app
+NODE_ENV=production
+GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+MONGODB_URI=mongodb+srv://StudentRegistrationForm:regform-01@cluster0.czzkzzu.mongodb.net/student_registration?retryWrites=true&w=majority&appName=Cluster0
+PORT=5001
+JWT_SECRET=your_super_secret_key_change_this_in_production_123456
+SESSION_SECRET=4a441960ece246bf1fae8c9a34ffc7737a46038f480c7e04fa053ebd8dd492cef496dc8dfdabcf7993092dc6b97bc8fdb32df35d4e5b8b0a458f99615828f5de
+
+VERCEL FRONTEND:
+----------------
+REACT_APP_API_URL=https://student-registration-backend.onrender.com
+
+GOOGLE OAUTH CONSOLE:
+---------------------
+Authorized JavaScript origins:
+  https://student-registration-form.vercel.app
+  https://student-registration-backend.onrender.com
+  http://localhost:3000
+  http://localhost:5001
+
+Authorized redirect URIs:
+  https://student-registration-backend.onrender.com/auth/google/callback
+  http://localhost:5001/auth/google/callback
+
+================================================================================
+STILL NOT WORKING?
+================================================================================
+
+If you still see localhost:5001 after following all steps:
+
+1. Check browser Network tab (F12 → Network):
+   - Look for the redirect URL in the request
+   - Verify which URL Google is redirecting to
+
+2. Check Render backend logs:
+   - Go to Render dashboard → Your service → Logs
+   - Look for errors related to OAuth or sessions
+
+3. Verify environment variables are actually set:
+   - Render dashboard → Your service → Environment
+   - Make sure GOOGLE_CALLBACK_URL shows production URL, not localhost
+
+4. Check if Google Console changes saved:
+   - Go back to Google Console
+   - Verify the URLs are still there (sometimes they don't save)
+
+5. Try these debugging steps:
+   - Visit: https://your-backend-app.onrender.com/
+   - You should see: {"message":"Student Registration API is running"}
+   - If not, backend isn't running properly
+
+6. Nuclear option (if nothing else works):
+   - Delete and recreate OAuth credentials in Google Console
+   - Update GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET on Render
+   - Redeploy everything
+
+================================================================================
+CONTACT SUPPORT
+================================================================================
+
+If you need help:
+- Google OAuth Support: https://support.google.com/cloud/
+- Render Support: https://render.com/docs/support
+- Vercel Support: https://vercel.com/support
+
+================================================================================
+                            END OF FIX GUIDE
+================================================================================
+
+Created: February 20, 2026
+Status: Production OAuth Fix

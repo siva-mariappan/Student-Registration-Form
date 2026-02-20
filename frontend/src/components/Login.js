@@ -4,7 +4,7 @@ import '../styles/Login.css';
 const Login = () => {
   const handleGoogleLogin = () => {
     // Redirect to backend Google OAuth route
-    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+    const apiUrl = process.env.REACT_APP_API_URL || 'https://student-registration-form-ar1g.onrender.com';
     window.location.href = `${apiUrl}/auth/google`;
   };
 

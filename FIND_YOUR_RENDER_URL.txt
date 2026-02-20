@@ -1,0 +1,72 @@
+================================================================================
+                HOW TO FIND YOUR RENDER PUBLIC URL
+================================================================================
+
+You shared: https://dashboard.render.com/web/srv-d6bto8ogjchc73fuc5o0
+This is your DASHBOARD URL (for managing the service)
+
+We need your PUBLIC URL (where your API is actually hosted)
+
+================================================================================
+STEP 1: FIND YOUR PUBLIC RENDER URL
+================================================================================
+
+1. You're already at: https://dashboard.render.com/web/srv-d6bto8ogjchc73fuc5o0
+
+2. Look at the TOP of the page, you'll see something like:
+
+   ┌─────────────────────────────────────────────────────────┐
+   │  Your Service Name                                       │
+   │  https://your-service-name.onrender.com        [Copy]   │
+   │                                                          │
+   │  Deployed  •  Last updated X minutes ago                │
+   └─────────────────────────────────────────────────────────┘
+
+3. The URL looks like:
+   https://XXXXX.onrender.com
+   OR
+   https://your-app-name.onrender.com
+
+4. Click the COPY button next to that URL
+
+5. That's your PUBLIC BACKEND URL!
+
+================================================================================
+EXAMPLE
+================================================================================
+
+Your dashboard URL:
+https://dashboard.render.com/web/srv-d6bto8ogjchc73fuc5o0
+
+Your public URL might be something like:
+https://student-registration-backend.onrender.com
+OR
+https://srv-d6bto8ogjchc73fuc5o0.onrender.com
+
+================================================================================
+ALTERNATIVE WAY TO FIND IT
+================================================================================
+
+1. Go to: https://dashboard.render.com
+
+2. You'll see a list of your services
+
+3. Look for your backend service (usually named something like "student-registration-backend")
+
+4. Under the service name, you'll see the URL: https://xxxxx.onrender.com
+
+5. That's your public URL!
+
+================================================================================
+TEST YOUR URL
+================================================================================
+
+Once you find it, test it by visiting:
+https://your-url.onrender.com
+
+You should see:
+{"message":"Student Registration API is running"}
+
+If you see this, that's the correct URL!
+
+================================================================================
