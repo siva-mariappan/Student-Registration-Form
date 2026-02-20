@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('passport');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const connectDB = require('./config/db');
@@ -34,8 +35,10 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI,
-    touchAfter: 24 * 3600 // lazy session update (in seconds)
+    client: mongoose.connection.getClient(),
+    dbName: 'student_registration',
+    collectionName: 'sessions',
+    ttl: 24 * 60 * 60 // 1 day
   }),
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
