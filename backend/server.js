@@ -20,7 +20,7 @@ require('./config/passport')(passport);
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }));
 
@@ -35,7 +35,8 @@ app.use(session({
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     httpOnly: true,
-    secure: false // set to true if using HTTPS
+    secure: process.env.NODE_ENV === 'production', // true in production for HTTPS
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Required for cross-site cookies
   }
 }));
 

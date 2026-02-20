@@ -14,11 +14,11 @@ router.get('/google',
 // @desc    Google callback URL
 router.get('/google/callback',
   passport.authenticate('google', {
-    failureRedirect: 'http://localhost:3000/login'
+    failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/login`
   }),
   (req, res) => {
     // Successful authentication, redirect to frontend
-    res.redirect('http://localhost:3000');
+    res.redirect(process.env.FRONTEND_URL || 'http://localhost:3000');
   }
 );
 
