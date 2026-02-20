@@ -32,18 +32,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Session middleware (must be before passport)
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your_session_secret',
-  resave: false,
+  resave: true,
   saveUninitialized: false,
   store: new MongoStore({
     mongoUrl: process.env.MONGODB_URI,
     collectionName: 'sessions',
-    ttl: 24 * 60 * 60 // 1 day
+    ttl: 24 * 60 * 60, // 1 day
+    autoRemove: 'native'
   }),
+  proxy: true, // Trust proxy for secure cookies behind Render
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // true in production for HTTPS
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Required for cross-site cookies
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Required for cross-site cookies
+    domain: process.env.NODE_ENV === 'production' ? undefined : undefined // Let browser handle domain
   }
 }));
 
