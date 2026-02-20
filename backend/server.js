@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const passport = require('passport');
 require('dotenv').config();
 
@@ -32,6 +33,10 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'your_session_secret',
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    touchAfter: 24 * 3600 // lazy session update (in seconds)
+  }),
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     httpOnly: true,
